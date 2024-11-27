@@ -1,0 +1,83 @@
+
+import streamlit as st
+
+# Inizializzazione della sessione
+if 'page' not in st.session_state:
+    st.session_state.page = 'login'
+
+if 'username' not in st.session_state:
+    st.session_state.username = None
+
+# Funzione per navigare tra le schermate
+def navigate_to(page):
+    st.session_state.page = page
+
+# Schermata di login/registrazione
+def login_page():
+    st.title("Login / Registrazione")
+    st.write("Benvenuto! Accedi o registrati per utilizzare l'app.")
+
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Login"):
+        if email and password:
+            st.session_state.username = email
+            navigate_to("dashboard")
+        else:
+            st.error("Inserisci email e password!")
+
+    if st.button("Registrati"):
+        if email and password:
+            st.session_state.username = email
+            st.success("Registrazione completata! Ora puoi accedere.")
+        else:
+            st.error("Compila tutti i campi!")
+
+# Dashboard delle città
+def dashboard_page():
+    st.title("Dashboard delle Città")
+    st.write(f"Benvenuto, {st.session_state.username}!")
+    st.write("Scegli una città per accedere alla chat.")
+
+    cities = ["Tokyo", "Kyoto", "Osaka", "Nara", "Hiroshima"]
+    for city in cities:
+        if st.button(f"Chat {city}"):
+            st.session_state.selected_city = city
+            navigate_to("chat")
+
+    if st.button("Logout"):
+        st.session_state.username = None
+        navigate_to("login")
+
+# Schermata della chat
+def chat_page():
+    st.title(f"Chat {st.session_state.selected_city}")
+    st.write("Connettiti con altri viaggiatori!")
+
+    # Mock dei messaggi
+    messages = [
+        {"user": "Alice", "text": "Ciao! Qualcuno vuole esplorare oggi?"},
+        {"user": "Bob", "text": "Io sono disponibile nel pomeriggio!"},
+    ]
+
+    for message in messages:
+        st.write(f"**{message['user']}**: {message['text']}")
+
+    user_message = st.text_input("Scrivi un messaggio")
+    if st.button("Invia"):
+        if user_message:
+            st.success("Messaggio inviato!")  # Simulazione
+        else:
+            st.error("Scrivi qualcosa prima di inviare!")
+
+    if st.button("Torna alla Dashboard"):
+        navigate_to("dashboard")
+
+# Gestione delle pagine
+if st.session_state.page == 'login':
+    login_page()
+elif st.session_state.page == 'dashboard':
+    dashboard_page()
+elif st.session_state.page == 'chat':
+    chat_page()
